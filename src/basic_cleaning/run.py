@@ -28,20 +28,39 @@ def go(args):
     
     run = wandb.init(job_type="basic_cleaning")
     run.config.update(args)
+    
+    # Get args
+    min_price = args.min_price
+    max_price = args.max_price
 
     # Download input artifact. This will also log that this script is using this
     # particular version of the artifact
     logger.info("Downloading input artifact")
     artifact_local_path = run.use_artifact(args.input_artifact).file()
     
-    logger.info("Loading data into dataframe from CSV (read-only)")
+    logger.info("Loading data into dataframe from CSV")
     dataframe = pd.read_csv(artifact_local_path)
     
     # working on a copy keeps the original clean (but uses more memory resources)
+    logger.info("Working on a copy of the data")
     working_dataframe = dataframe.copy(deep=True)
     
-    logger.info("Cleaning data: Removing outliers")
+    logger.info(
+        "Cleaning data: Removing outliers (keeping data rows with prices between %f and %f dollars)",
+        min_price,
+        max_price)
+    idx = working_dataframe['price'].between(min_price, max_price)
+    working_dataframe = working_dataframe[idx].copy()
+    
+    # logger.info("Cleaning data: Reducing geographical zone: Removing locations out of the zone of interest")
+    # min_longitude = ?
+    # max_longitude = ?
+    # min_latitude = ?
+    # max_latitude = ?
+    # idx = working_dataframe['longitude'].between(min_longitude, max_longitude) & working_dataframe['latitude'].between(min_latitude, max_latitude)
+    
     logger.info("Cleaning data: Running data type conversions")
+    working_dataframe['last_review'] = pd.to_datetime(working_dataframe['last_review'])
     
     logger.info("Saving created artifact to local CSV")
     working_dataframe.to_csv("clean_sample.csv", index=False)
@@ -59,7 +78,6 @@ def go(args):
     os.remove(artifact_local_path)
     
     logger.info("Cleaning step DONE")
-    ######################
 
 
 if __name__ == "__main__":
@@ -90,7 +108,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_description", 
         type=str,
-        help="Artifact description",
+        help="Description of the output artifact",
         required=True
     )
     
