@@ -4,6 +4,9 @@ import scipy.stats
 
 
 def test_column_names(data):
+    """
+    Test data has expected structure
+    """
 
     expected_colums = [
         "id",
@@ -31,7 +34,10 @@ def test_column_names(data):
 
 
 def test_neighborhood_names(data):
-
+    """
+    Test neighbourhood names are unique
+    """
+    
     known_names = ["Bronx", "Brooklyn", "Manhattan", "Queens", "Staten Island"]
 
     neigh = set(data['neighbourhood_group'].unique())
