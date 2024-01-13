@@ -34,7 +34,15 @@ def go(config: DictConfig):
 
     # Move to a temporary directory
     with tempfile.TemporaryDirectory() as tmp_dir:
+        
+        # Configured values
+        configured_min_price = config["etl"]["min_price"]
+        configured_max_price = config["etl"]["max_price"]
+        
+        # Variables for configuration of pipeline runs
+        reference_sample_tag = "reference"
 
+        # Executing steps
         if "download" in active_steps:
             # Download file and load in W&B
             _ = mlflow.run(
@@ -58,16 +66,23 @@ def go(config: DictConfig):
                     "output_artifact": "clean_sample.csv",
                     "output_type": "clean_sample",
                     "output_description": "Data with outliers and null values removed",
-                    "min_price": config["etl"]["min_price"],
-                    "max_price": config["etl"]["max_price"]
+                    "min_price": configured_min_price,
+                    "max_price": configured_max_price
                 },
             )
 
         if "data_check" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            _ = mlflow.run(
+                os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
+                "main",
+                parameters={
+                    "csv": "clean_sample.csv:latest",
+                    "ref": f"clean_sample.csv:{reference_sample_tag}",
+                    "kl_threshold": config["data_check"]["kl_threshold"],
+                    "min_price": configured_min_price,
+                    "max_price": configured_max_price
+                }
+            )
 
         if "data_split" in active_steps:
             ##################

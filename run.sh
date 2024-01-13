@@ -10,3 +10,6 @@ jupyter-notebook --no-browser
 
 # Manually run download+basic cleaning
 mlflow run . -P steps=download,basic_cleaning
+
+# Run only data_check step
+mlflow run . -P steps=data_check
