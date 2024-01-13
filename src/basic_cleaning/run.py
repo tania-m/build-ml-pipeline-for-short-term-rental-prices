@@ -52,12 +52,14 @@ def go(args):
     idx = working_dataframe['price'].between(min_price, max_price)
     working_dataframe = working_dataframe[idx].copy()
     
-    # logger.info("Cleaning data: Reducing geographical zone: Removing locations out of the zone of interest")
-    # min_longitude = ?
-    # max_longitude = ?
-    # min_latitude = ?
-    # max_latitude = ?
+    # logger.info("Cleaning data: Limiting geographical zone: Removing locations out of the zone of interest")
+    # Needed for when training on data that may have different geographical range
+    # min_longitude = -74.25
+    # max_longitude = -73.50
+    # min_latitude = 40.5
+    # max_latitude = 41.2
     # idx = working_dataframe['longitude'].between(min_longitude, max_longitude) & working_dataframe['latitude'].between(min_latitude, max_latitude)
+    # df = df[idx].copy()
     
     logger.info("Cleaning data: Running data type conversions")
     working_dataframe['last_review'] = pd.to_datetime(working_dataframe['last_review'])
