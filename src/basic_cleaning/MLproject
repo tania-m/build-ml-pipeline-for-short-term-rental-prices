@@ -13,6 +13,22 @@ entry_points:
         description: Full name of the output artifact
         type: string
 
+      output_type:
+        description: Output type of the artifact
+        type: string
+
+      output_description:
+        description: Description of the output artifact
+        type: string
+
+      min_price:
+        description: Minimum price in dollars (prices below are considered outliers)
+        type: float
+
+      max_price:
+        description: Maximum price in dollars (prices above are considered outliers)
+        type: float
+
 
     command: >-
-        python run.py  --parameter1 {parameter1}  --parameter2 {parameter2}
+        python run.py  --input_artifact {input_artifact}  --output_artifact {output_artifact}  --output_type {output_type}  --output_description {output_description}  --min_price {min_price}  --max_price {max_price}

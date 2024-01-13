@@ -80,33 +80,33 @@ if __name__ == "__main__":
         required=True
     )
     
-    # parser.add_argument(
-    #     "--output_type", 
-    #     type=str,
-    #     help="HELP",
-    #     required=True
-    # )
+    parser.add_argument(
+        "--output_type", 
+        type=str,
+        help="Output artifact type",
+        required=True
+    )
     
-    # parser.add_argument(
-    #     "--output_description", 
-    #     type=str,
-    #     help="HELP",
-    #     required=True
-    # )
+    parser.add_argument(
+        "--output_description", 
+        type=str,
+        help="Artifact description",
+        required=True
+    )
     
-    # parser.add_argument(
-    #     "--min_price", 
-    #     type=str,
-    #     help="HELP",
-    #     required=True
-    # )
+    parser.add_argument(
+        "--min_price", 
+        type=int,
+        help="Minimum price (dollars) (values below will be removed, considered outliers)",
+        required=True
+    )
     
-    # parser.add_argument(
-    #     "--max_price", 
-    #     type=str,
-    #     help="HELP",
-    #     required=True
-    # )
+    parser.add_argument(
+        "--max_price", 
+        type=int,
+        help="Maximum price (dollars) (values above will be removed, considered outliers)",
+        required=True
+    )
 
     args = parser.parse_args()
 
