@@ -113,3 +113,8 @@ mlruns/
 outputs/
 random_forest_dir/
 multirun/
+
+# Other artifacts
+src/eda/.ipynb_checkpoints
+src/eda/artifacts
+src/eda/wandb
