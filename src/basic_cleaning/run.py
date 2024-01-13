@@ -79,7 +79,34 @@ if __name__ == "__main__":
         help="Full name of the output artifact containing cleaned data",
         required=True
     )
-
+    
+    # parser.add_argument(
+    #     "--output_type", 
+    #     type=str,
+    #     help="HELP",
+    #     required=True
+    # )
+    
+    # parser.add_argument(
+    #     "--output_description", 
+    #     type=str,
+    #     help="HELP",
+    #     required=True
+    # )
+    
+    # parser.add_argument(
+    #     "--min_price", 
+    #     type=str,
+    #     help="HELP",
+    #     required=True
+    # )
+    
+    # parser.add_argument(
+    #     "--max_price", 
+    #     type=str,
+    #     help="HELP",
+    #     required=True
+    # )
 
     args = parser.parse_args()
 
