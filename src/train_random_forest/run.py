@@ -39,6 +39,9 @@ logger = logging.getLogger()
 
 
 def go(args):
+    """
+    Run the train_random_forest pipeline step
+    """
 
     run = wandb.init(job_type="train_random_forest")
     run.config.update(args)
@@ -49,29 +52,35 @@ def go(args):
     run.config.update(rf_config)
 
     # Fix the random seed for the Random Forest, so we get reproducible results
-    rf_config['random_state'] = args.random_seed
+    random_seed = args.random_seed
+    logger.info("Setting seed for random forest to ", random_seed)
+    rf_config['random_state'] = random_seed
 
     ######################################
     # Use run.use_artifact(...).file() to get the train and validation artifact (args.trainval_artifact)
     # and save the returned path in train_local_pat
+    logger.info("Getting training and validation artifacts")
+    
+    logger.info("Saving training and validation artifacts to local path")
     trainval_local_path = # YOUR CODE HERE
     ######################################
 
+    logger.info("Reading training data into local dataframe")
     X = pd.read_csv(trainval_local_path)
     y = X.pop("price")  # this removes the column "price" from X and puts it into y
 
     logger.info(f"Minimum price: {y.min()}, Maximum price: {y.max()}")
 
+    logger.info("Running train_test_split to prepare inference pipeline")
     X_train, X_val, y_train, y_val = train_test_split(
         X, y, test_size=args.val_size, stratify=X[args.stratify_by], random_state=args.random_seed
     )
 
     logger.info("Preparing sklearn pipeline")
-
     sk_pipe, processed_features = get_inference_pipeline(rf_config, args.max_tfidf_features)
 
     # Then fit it to the X_train, y_train data
-    logger.info("Fitting")
+    logger.info("Fitting (to the X_train, y_train data)")
 
     ######################################
     # Fit the pipeline sk_pipe by calling the .fit method on X_train and y_train
@@ -110,6 +119,7 @@ def go(args):
     ######################################
 
     # Plot feature importance
+    logger.info("Plotting feature importance")
     fig_feat_imp = plot_feature_importance(sk_pipe, processed_features)
 
     ######################################
@@ -120,6 +130,7 @@ def go(args):
     ######################################
 
     # Upload to W&B the feture importance visualization
+    logger.info("Saving feature importance to W&B")
     run.log(
         {
           "feature_importance": wandb.Image(fig_feat_imp),
@@ -128,6 +139,10 @@ def go(args):
 
 
 def plot_feature_importance(pipe, feat_names):
+    """
+    Create feature importance plot
+    """
+    
     # We collect the feature importance for all non-nlp features first
     feat_imp = pipe["random_forest"].feature_importances_[: len(feat_names)-1]
     # For the NLP feature we sum across all the TF-IDF dimensions into a global
@@ -144,6 +159,10 @@ def plot_feature_importance(pipe, feat_names):
 
 
 def get_inference_pipeline(rf_config, max_tfidf_features):
+    """
+    TBD
+    """
+    
     # Let's handle the categorical features first
     # Ordinal categorical are categorical values for which the order is meaningful, for example
     # for room type: 'Entire home/apt' > 'Private room' > 'Shared room'

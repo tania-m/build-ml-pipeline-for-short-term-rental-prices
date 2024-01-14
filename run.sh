@@ -13,3 +13,9 @@ mlflow run . -P steps=download,basic_cleaning
 
 # Run only data_check step
 mlflow run . -P steps=data_check
+
+# Run data_split step
+mlflow run . -P steps=data_split
+
+# Run all steps from download to data_split
+mlflow run . -P steps=download,basic_cleaning,data_check,data_split

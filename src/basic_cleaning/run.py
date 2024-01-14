@@ -20,6 +20,11 @@ def go(args):
     argument:
         args : 
             - input_artifact Full name of the input artifact
+            - output_artifact Full name of the output artifact
+            - output_type Output type of the artifact
+            - output_description Output artifact description
+            - min_price Min price (used for outlier removal)
+            - max_price Max price (used for outlier removal)
     return:
         None
     """
