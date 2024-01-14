@@ -19,3 +19,6 @@ mlflow run . -P steps=data_split
 
 # Run all steps from download to data_split
 mlflow run . -P steps=download,basic_cleaning,data_check,data_split
+
+# Run training step
+mlflow run . -P steps=train_random_forest

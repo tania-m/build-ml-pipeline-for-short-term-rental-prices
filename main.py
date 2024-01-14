@@ -72,6 +72,8 @@ def go(config: DictConfig):
             )
 
         if "data_check" in active_steps:
+            # Uses clean_sample.csv:latest created in basic_cleaning step
+            # and a reference dataset saved from a previous run, clean_sample.csv:reference
             _ = mlflow.run(
                 os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
                 "main",
