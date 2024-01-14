@@ -1,15 +1,16 @@
 # Build an ML Pipeline for Short-Term Rental Prices in NYC
 You are working for a property management company renting rooms and properties for short periods of 
-time on various rental platforms. You need to estimate the typical price for a given property based 
-on the price of similar properties. Your company receives new data in bulk every week. The model needs 
+time on various rental platforms. We need to estimate the typical price for a given property based 
+on the price of similar properties. Our company receives new data in bulk every week. The model needs 
 to be retrained with the same cadence, necessitating an end-to-end pipeline that can be reused.
 
-In this project you will build such a pipeline.
+In this project we will build such a pipeline.
+[Weights and Biases Project link](https://wandb.ai/tania-m/nyc_airbnb?workspace=user-tania-m)
 
 ## Table of contents
 
 - [Introduction](#build-an-ML-Pipeline-for-Short-Term-Rental-Prices-in-NYC)
-- [Preliminary steps](#preliminary-steps)
+- [Setup for development](#preliminary-steps)
   * [Fork the Starter Kit](#fork-the-starter-kit)
   * [Create environment](#create-environment)
   * [Get API key for Weights and Biases](#get-api-key-for-weights-and-biases)
@@ -31,24 +32,7 @@ In this project you will build such a pipeline.
   * [Train the model on a new data sample](#train-the-model-on-a-new-data-sample)
 - [Cleaning up](#cleaning-up)
 
-## Preliminary steps
-### Fork the Starter kit
-Go to [https://github.com/udacity/build-ml-pipeline-for-short-term-rental-prices.git](https://github.com/udacity/build-ml-pipeline-for-short-term-rental-prices.git)
-and click on `Fork` in the upper right corner. This will create a fork in your Github account, i.e., a copy of the
-repository that is under your control. Now clone the repository locally so you can start working on it:
-
-```
-git clone https://github.com/[your github username]/build-ml-pipeline-for-short-term-rental-prices.git
-```
-
-and go into the repository:
-
-```
-cd build-ml-pipeline-for-short-term-rental-prices
-```
-Commit and push to the repository often while you make progress towards the solution. Remember 
-to add meaningful commit messages.
-
+## Setup for development
 ### Create environment
 Make sure to have conda installed and ready, then create a new environment using the ``environment.yml``
 file provided in the root of the repository and activate it:
@@ -211,9 +195,6 @@ a significantly-better model for this dataset.
 The scope of this section is to get an idea of how the process of an EDA works in the context of
 pipelines, during the data exploration phase. In a real scenario you would spend a lot more time
 in this phase, but here we are going to do the bare minimum.
-
-NOTE: remember to add some markdown cells explaining what you are about to do, so that the
-notebook can be understood by other people like your colleagues
 
 1. The ``main.py`` script already comes with the download step implemented. Run the pipeline to 
    get a sample of the data. The pipeline will also upload it to Weights & Biases:
