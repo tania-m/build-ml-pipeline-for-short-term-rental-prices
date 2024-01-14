@@ -26,6 +26,7 @@ def go(args):
     # particular version of the artifact
     logger.info(f"mlflow_model: {args.mlflow_model}")
     model_local_path = run.use_artifact(args.mlflow_model).download()
+    #model_local_path = run.use_artifact('tania-m/nyc_airbnb/random_forest_export:prod', type='model_export').download()
 
     # Download test dataset
     logger.info(f"test_dataset: {args.test_dataset}")
@@ -37,6 +38,8 @@ def go(args):
 
     logger.info(f"Loading model from path {model_local_path} and performing inference on test set")
     sk_pipe = mlflow.sklearn.load_model(model_local_path)
+    
+    logger.info("Getting test predictions")
     y_pred = sk_pipe.predict(X_test)
 
     logger.info("Scoring")
