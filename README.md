@@ -5,7 +5,10 @@ on the price of similar properties. Our company receives new data in bulk every 
 to be retrained with the same cadence, necessitating an end-to-end pipeline that can be reused.
 
 In this project we will build such a pipeline.
-[Weights and Biases Project link](https://wandb.ai/tania-m/nyc_airbnb?workspace=user-tania-m)
+
+## Project links
+- [Weights and Biases Project link](https://wandb.ai/tania-m/nyc_airbnb?workspace=user-tania-m)
+- [Example pipeline overview for model tagged as `prod`](https://wandb.ai/tania-m/nyc_airbnb/artifacts/model_export/random_forest_export/v57/lineage)
 
 ## Table of contents
 

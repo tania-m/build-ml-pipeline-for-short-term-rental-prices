@@ -16,7 +16,7 @@ _steps = [
     # NOTE: We do not include this in the steps so it is not run by mistake.
     # You first need to promote a model export to "prod" before you can run this,
     # then you need to run this step explicitly
-#    "test_regression_model"
+    "test_regression_model"
 ]
 
 
@@ -130,6 +130,10 @@ def go(config: DictConfig):
         if "test_regression_model" in active_steps:
             # This step must be triggered manually
             # Uses test_data.csv:latest created in data_split step
+            
+            # The provided component does not work...
+            # https://knowledge.udacity.com/questions/1024670
+            # So we took the code and adapted it to work (looks like a dependency issue)
             # _ = mlflow.run(
             #     f"{config['main']['components_repository']}/test_regression_model",
             #     "main",
