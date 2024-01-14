@@ -135,6 +135,8 @@ def go(args):
           "feature_importance": wandb.Image(fig_feat_imp),
         }
     )
+    
+    logger.info("Training step DONE")
 
 
 def plot_feature_importance(pipe, feat_names):
@@ -159,7 +161,7 @@ def plot_feature_importance(pipe, feat_names):
 
 def get_inference_pipeline(rf_config, max_tfidf_features):
     """
-    TBD
+    Build sklearn inference pipeline
     """
     
     # Let's handle the categorical features first
@@ -195,13 +197,15 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # A MINIMAL FEATURE ENGINEERING step:
     # we create a feature that represents the number of days passed since the last review
     # First we impute the missing review date with an old date (because there hasn't been
-    # a review for a long time), and then we create a new feature from it,
+    # a review for a long time), and then we create a new feature from it
+    logger.info("Preparing imputation sub-pipeline")
     date_imputer = make_pipeline(
         SimpleImputer(strategy='constant', fill_value='2010-01-01'),
         FunctionTransformer(delta_date_feature, check_inverse=False, validate=False)
     )
 
     # Some minimal NLP for the "name" column
+    logger.info("Preparing NLP sub-pipeline")
     reshape_to_1d = FunctionTransformer(np.reshape, kw_args={"newshape": -1})
     name_tfidf = make_pipeline(
         SimpleImputer(strategy="constant", fill_value=""),
@@ -214,6 +218,7 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     )
 
     # Let's put everything together
+    logger.info("Putting together all pre-processing operations (transformers) in a column transformer")
     preprocessor = ColumnTransformer(
         transformers=[
             ("ordinal_cat", ordinal_categorical_preproc, ordinal_categorical),
@@ -226,8 +231,10 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     )
 
     processed_features = ordinal_categorical + non_ordinal_categorical + zero_imputed + ["last_review", "name"]
+    logger.info("Gathered processed features")
 
     # Create random forest
+    logger.info("Creating random forest regressor")
     random_Forest = RandomForestRegressor(**rf_config)
 
     ######################################
@@ -235,6 +242,7 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # ColumnTransformer instance that we saved in the `preprocessor` variable, and a step called "random_forest"
     # with the random forest instance that we just saved in the `random_forest` variable.
     # HINT: Use the explicit Pipeline constructor so you can assign the names to the steps, do not use make_pipeline
+    logger.info("Creating the sklearn two-steps inference pipeline")
     sk_pipe = # YOUR CODE HERE
 
     return sk_pipe, processed_features
