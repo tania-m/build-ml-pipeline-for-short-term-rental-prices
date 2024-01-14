@@ -59,6 +59,8 @@ def go(config: DictConfig):
             )
 
         if "basic_cleaning" in active_steps:
+            # Basic data cleaning
+            # Use sample.csv:latest downloaded by the download step
             _ = mlflow.run(
                 os.path.join(hydra.utils.get_original_cwd(), "src", "basic_cleaning"),
                 "main",
@@ -126,7 +128,7 @@ def go(config: DictConfig):
             )
 
         if "test_regression_model" in active_steps:
-            # THis step must be triggered manually
+            # This step must be triggered manually
             # Uses test_data.csv:latest created in data_split step
             _ = mlflow.run(
                 f"{config['main']['components_repository']}/test_regression_model",
