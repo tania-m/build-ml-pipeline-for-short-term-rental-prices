@@ -41,6 +41,7 @@ def go(config: DictConfig):
         
         # Variables for configuration of pipeline runs
         reference_sample_tag = "reference"
+        prod_model_tag = "prod"
 
         # Executing steps
         if "download" in active_steps:
@@ -125,12 +126,17 @@ def go(config: DictConfig):
             )
 
         if "test_regression_model" in active_steps:
-
-            ##################
-            # Implement here #
-            ##################
-
-            pass
+            # THis step must be triggered manually
+            # Uses test_data.csv:latest created in data_split step
+            _ = mlflow.run(
+                f"{config['main']['components_repository']}/test_regression_model",
+                "main",
+                version="main",
+                parameters={
+                    "mlflow_model": f"random_forest_export:{prod_model_tag}",
+                    "test_dataset": "test_data.csv:latest"
+                }
+            )
 
 
 if __name__ == "__main__":
