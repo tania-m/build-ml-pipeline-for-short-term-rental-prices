@@ -22,3 +22,11 @@ mlflow run . -P steps=download,basic_cleaning,data_check,data_split
 
 # Run training step
 mlflow run . -P steps=train_random_forest
+# Run training step with varying hyperparameters
+# try setting the parameter modeling.max_tfidf_features to 10, 15 and 30, and the modeling.random_forest.max_features to 0.1, 0.33, 0.5, 0.75, 1.
+mlflow run . \
+  -P steps=train_random_forest \
+  -P hydra_options="modeling.random_forest.max_depth=10,50,100 modeling.random_forest.n_estimators=100,200,500 -m"
+
+# Run model test
+mlflow run . -P steps=test_regression_model
