@@ -130,10 +130,19 @@ def go(config: DictConfig):
         if "test_regression_model" in active_steps:
             # This step must be triggered manually
             # Uses test_data.csv:latest created in data_split step
+            # _ = mlflow.run(
+            #     f"{config['main']['components_repository']}/test_regression_model",
+            #     "main",
+            #     version="main",
+            #     parameters={
+            #         "mlflow_model": f"random_forest_export:{prod_model_tag}",
+            #         "test_dataset": "test_data.csv:latest"
+            #     }
+            # )
+            
             _ = mlflow.run(
-                f"{config['main']['components_repository']}/test_regression_model",
+                os.path.join(hydra.utils.get_original_cwd(), "src", "test_regression_model"),
                 "main",
-                version="main",
                 parameters={
                     "mlflow_model": f"random_forest_export:{prod_model_tag}",
                     "test_dataset": "test_data.csv:latest"
