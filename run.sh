@@ -37,3 +37,8 @@ mlflow run . -P steps=train_random_forest,test_regression_model
 
 # Run whole pipeline (with tests)
 mlflow run . -P steps=download,basic_cleaning,data_check,data_split,train_random_forest,test_regression_model
+
+# Train on another dataset (fails)
+mlflow run https://github.com/tania-m/build-ml-pipeline-for-short-term-rental-prices.git -v 1.0.0 -P hydra_options="etl.sample='sample2.csv'"
+# Train on another dataset (with updated code)
+mlflow run https://github.com/tania-m/build-ml-pipeline-for-short-term-rental-prices.git -v 1.0.1 -P hydra_options="etl.sample='sample2.csv'"
