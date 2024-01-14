@@ -8,8 +8,9 @@ import os
 import shutil
 import matplotlib.pyplot as plt
 
-import mlflow
 import json
+import mlflow
+#from mlflow.models.signature import infer_signature
 
 import pandas as pd
 import numpy as np
@@ -47,22 +48,26 @@ def go(args):
     run.config.update(args)
 
     # Get the Random Forest configuration and update W&B
+    logger.info("Getting JSON-serialized random forest configuration")
     with open(args.rf_config) as fp:
         rf_config = json.load(fp)
+        
+    logger.info("Updating run with random forest configuration")
     run.config.update(rf_config)
 
     # Fix the random seed for the Random Forest, so we get reproducible results
     random_seed = args.random_seed
-    logger.info("Setting seed for random forest to ", random_seed)
-    rf_config['random_state'] = random_seed
+    logger.info(f"Setting seed for random forest to {random_seed}")
+    rf_config["random_state"] = random_seed
 
     ######################################
     # Use run.use_artifact(...).file() to get the train and validation artifact (args.trainval_artifact)
     # and save the returned path in train_local_pat
     logger.info("Getting training and validation artifacts")
+    trainval_artifact = args.trainval_artifact
     
-    logger.info("Saving training and validation artifacts to local path")
-    trainval_local_path = # YOUR CODE HERE
+    logger.info("Saving training and validation artifacts to local file")
+    trainval_local_path = run.use_artifact(trainval_artifact).file()
     ######################################
 
     logger.info("Reading training data into local dataframe")
@@ -79,11 +84,10 @@ def go(args):
     logger.info("Preparing sklearn pipeline")
     sk_pipe, processed_features = get_inference_pipeline(rf_config, args.max_tfidf_features)
 
-    logger.info("Fitting (to the X_train, y_train data)")
-
     ######################################
     # Fit the pipeline sk_pipe by calling the .fit method on X_train and y_train
-    # YOUR CODE HERE
+    logger.info("Fitting the pipeline to the X_train, y_train datasets")
+    sk_pipe.fit(X_train, y_train)
     ######################################
 
     # Compute r2 and MAE
@@ -99,22 +103,42 @@ def go(args):
     logger.info("Exporting model")
 
     # Save model package in the MLFlow sklearn format
-    if os.path.exists("random_forest_dir"):
-        shutil.rmtree("random_forest_dir")
+    target_export_dir_name = "random_forest_dir"
+    if os.path.exists(target_export_dir_name):
+        logger.info("Target directory random_forest_dir already exists. Removing it to clean workspace")
+        shutil.rmtree(target_export_dir_name)
 
     ######################################
     # Save the sk_pipe pipeline as a mlflow.sklearn model in the directory "random_forest_dir"
-    # HINT: use mlflow.sklearn.save_model
-    # YOUR CODE HERE
+    #logger.info("Infering model signature")
+    #signature = infer_signature(X_val, y_pred)
+    
+    logger.info(f"Saving model to {target_export_dir_name}")
+    mlflow.sklearn.save_model(
+            sk_pipe,
+            target_export_dir_name,
+            serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE,
+            #signature=signature, # seems to not be working
+            input_example=X_val.iloc[:5], # saving with 5 input examples
+        )
     ######################################
 
     ######################################
     # Upload the model we just exported to W&B
-    # HINT: use wandb.Artifact to create an artifact. Use args.output_artifact as artifact name, "model_export" as
-    # type, provide a description and add rf_config as metadata. Then, use the .add_dir method of the artifact instance
-    # you just created to add the "random_forest_dir" directory to the artifact, and finally use
-    # run.log_artifact to log the artifact to the run
-    # YOUR CODE HERE
+    output_artifact_name = args.output_artifact
+    logger.info("Preparing artifact model for upload to W&B")
+    artifact = wandb.Artifact(
+        output_artifact_name,
+        type="model_export",
+        description="Random Forest model (pipeline export from train_random_forest step)",
+        metadata=rf_config
+    )
+    
+    logger.info(f"Adding {target_export_dir_name} directory to artifact")
+    artifact.add_dir(target_export_dir_name)
+    run.log_artifact(artifact)
+
+    logger.info(f"Artifact {output_artifact_name} uploaded!")
     ######################################
 
     # Plot feature importance
@@ -135,6 +159,10 @@ def go(args):
           "feature_importance": wandb.Image(fig_feat_imp),
         }
     )
+    
+    if os.path.exists(target_export_dir_name):
+        logger.info(f"Cleaning up workspace, removing directory {target_export_dir_name}")
+        shutil.rmtree(target_export_dir_name)
     
     logger.info("Training step DONE")
 
@@ -175,10 +203,12 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     ordinal_categorical_preproc = OrdinalEncoder()
 
     ######################################
-    # Build a pipeline with two steps:
-    # 1 - A SimpleImputer(strategy="most_frequent") to impute missing values
-    # 2 - A OneHotEncoder() step to encode the variable
-    non_ordinal_categorical_preproc = # YOUR CODE HERE
+    # Build a (sub)pipeline with two steps
+    logger.info("Non oridinal categorical preprocessing sub-pipeline")
+    non_ordinal_categorical_preproc = make_pipeline(
+        SimpleImputer(strategy="most_frequent"), # impute missing values
+        OneHotEncoder() # encode the variable
+    )
     ######################################
 
     # Let's impute the numerical columns to make sure we can handle missing values
@@ -241,9 +271,14 @@ def get_inference_pipeline(rf_config, max_tfidf_features):
     # Create the inference pipeline. The pipeline must have 2 steps: a step called "preprocessor" applying the
     # ColumnTransformer instance that we saved in the `preprocessor` variable, and a step called "random_forest"
     # with the random forest instance that we just saved in the `random_forest` variable.
-    # HINT: Use the explicit Pipeline constructor so you can assign the names to the steps, do not use make_pipeline
     logger.info("Creating the sklearn two-steps inference pipeline")
-    sk_pipe = # YOUR CODE HERE
+    sk_pipe = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("random_forest", random_Forest)
+        ]
+    )
+    ######################################
 
     return sk_pipe, processed_features
 
