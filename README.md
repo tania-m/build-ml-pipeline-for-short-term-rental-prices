@@ -7,6 +7,7 @@ to be retrained with the same cadence, necessitating an end-to-end pipeline that
 In this project we will build such a pipeline.
 
 ## Project links
+- [Github project](https://github.com/tania-m/build-ml-pipeline-for-short-term-rental-prices) and [releases](https://github.com/tania-m/build-ml-pipeline-for-short-term-rental-prices/releases)
 - [Weights and Biases Project link](https://wandb.ai/tania-m/nyc_airbnb?workspace=user-tania-m)
 - [Example pipeline overview for model tagged as `prod`](https://wandb.ai/tania-m/nyc_airbnb/artifacts/model_export/random_forest_export/v57/lineage)
 
