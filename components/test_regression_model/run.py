@@ -24,16 +24,18 @@ def go(args):
     logger.info("Downloading artifacts")
     # Download input artifact. This will also log that this script is using this
     # particular version of the artifact
+    logger.info(f"mlflow_model: {args.mlflow_model}")
     model_local_path = run.use_artifact(args.mlflow_model).download()
 
     # Download test dataset
+    logger.info(f"test_dataset: {args.test_dataset}")
     test_dataset_path = run.use_artifact(args.test_dataset).file()
 
     # Read test dataset
     X_test = pd.read_csv(test_dataset_path)
     y_test = X_test.pop("price")
 
-    logger.info("Loading model and performing inference on test set")
+    logger.info(f"Loading model from path {model_local_path} and performing inference on test set")
     sk_pipe = mlflow.sklearn.load_model(model_local_path)
     y_pred = sk_pipe.predict(X_test)
 
