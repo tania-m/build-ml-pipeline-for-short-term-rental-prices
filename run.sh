@@ -23,9 +23,12 @@ mlflow run . -P steps=download,basic_cleaning,data_check,data_split
 # Run training step
 mlflow run . -P steps=train_random_forest
 # Run training step with varying hyperparameters
-mlflow run . \
-  -P steps=train_random_forest \
-  -P hydra_options="modeling.random_forest.max_tfidf_features=10,15,30 modeling.random_forest.max_features=0.1,0.33,0.5,0.75,1.0 -m"
+mlflow run . -P steps=train_random_forest -P hydra_options="modeling.max_tfidf_features=10,15,30 modeling.random_forest.max_features=0.1,0.33,0.5,0.75,1 -m"
+mlflow run . -P steps=train_random_forest -P hydra_options="modeling.max_tfidf_features=10,15,20,25,30 modeling.random_forest.max_features=0.1,0.33,0.5,0.66,0.75,1 -m"
+
+
+# Run all steps from download to train_random_forest
+mlflow run . -P steps=download,basic_cleaning,data_check,data_split,train_random_forest
 
 # Run model test
 mlflow run . -P steps=test_regression_model

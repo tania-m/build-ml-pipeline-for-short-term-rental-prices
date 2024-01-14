@@ -146,10 +146,11 @@ def go(args):
     fig_feat_imp = plot_feature_importance(sk_pipe, processed_features)
 
     ######################################
+    logger.info("Logging evaluation metrics r2 and mae")
     # Here we save r_squared under the "r2" key
-    run.summary['r2'] = r_squared
+    run.summary["r2"] = r_squared
     # Now log the variable "mae" under the key "mae".
-    # YOUR CODE HERE
+    run.summary["mae"] = mae
     ######################################
 
     # Upload to W&B the feture importance visualization
@@ -165,6 +166,7 @@ def go(args):
         shutil.rmtree(target_export_dir_name)
     
     logger.info("Training step DONE")
+    logger.info("Synchronizing artifacts with W&B")
 
 
 def plot_feature_importance(pipe, feat_names):
